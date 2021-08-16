@@ -1,5 +1,5 @@
 name:                privgen
-version:             0.1.0
+version:             0.7.9
 github:              "orkestra/privgen"
 license:             BSD3
 author:              "Can Bulbul"
@@ -21,28 +21,36 @@ description:         Please see the README on GitHub at <https://github.com/orke
 
 dependencies:
 - base >= 4.7 && < 5
+- text
+- warp
+- wai
+- servant
+- servant-server
+- blaze-html
+- servant-blaze
 
 library:
   source-dirs: src
 
 executables:
-  servant-exe:
+  privgen-exe:
     main:                Main.hs
-    source-dirs:         app
+    source-dirs: app
     ghc-options:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - servant
+    - privgen
 
 tests:
-  servant-test:
+  privgen-test:
     main:                Spec.hs
     source-dirs:         test
     ghc-options:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
+    - Wall
     dependencies:
-    - servant
+    - privgen
