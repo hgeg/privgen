@@ -23,7 +23,7 @@ findGame query = do
     where path = "games/" ++ query
 
 
-type API = "policy" :> Capture "gameName" String :> Get '[HTML] Page
+type API = "privacy" :> Capture "gameName" String :> Get '[HTML] Page
       :<|> "static" :> Raw
 type Page = Html
 
@@ -104,7 +104,7 @@ generatePolicy name = return . docTypeHtml $ do
                 Html.h2 "Changes to This Privacy Policy"
                 Html.p "We may update our Privacy Policy from time to time. Thus, you are advised to review this page periodically for any changes. We will notify you of any changes by posting the new Privacy Policy on this page. These changes are effective immediately after they are posted on this page."
 
-                Html.h2 "Request User Data Deletion"
+                Html.h2 ! Attr.id "DataDeletion" $ "Request User Data Deletion"
                 Html.p $ do
                     "When you install and use "
                     company
