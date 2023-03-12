@@ -1,11 +1,11 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.34.4.
+-- This file has been generated from package.yaml by hpack version 0.35.1.
 --
 -- see: https://github.com/sol/hpack
 
 name:           privgen
-version:        0.8.1
+version:        0.9.1.1
 description:    Please see the README on GitHub at <https://github.com/orkestra/privgen#readme>
 homepage:       https://github.com/orkestra/privgen#readme
 bug-reports:    https://github.com/orkestra/privgen/issues
@@ -25,6 +25,7 @@ source-repository head
 
 library
   exposed-modules:
+      PolicyMaker
       Server
   other-modules:
       Paths_privgen
