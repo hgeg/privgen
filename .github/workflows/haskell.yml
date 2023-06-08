@@ -31,7 +31,7 @@ jobs:
         
     - name: Tar and strip the binary
       run: |
-        export PROGRAM=chbwa
+        export PROGRAM=privgen-exe
         cp `stack exec -- which $PROGRAM` $PROGRAM
         tar -cavf privgen.tar.gz $PROGRAM
         
