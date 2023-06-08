@@ -20,8 +20,11 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build executable
-        run: cabal build
-
+        run: |
+          cabal build
+          EXECUTABLE_PATH=$(cabal v2-exec which privgen-exe)
+          echo "::set-output name=executable_path::$EXECUTABLE_PATH"
+          
       - name: Create release
         id: create_release
         uses: actions/create-release@v1
@@ -38,5 +41,5 @@ jobs:
       - name: Upload executable
         uses: actions/upload-artifact@v2
         with:
-          name: Executable
-          path: dist/build/my-executable/my-executable
+          name: privgen
+          path: ${{ steps.create_release.outputs.executable_path }}
