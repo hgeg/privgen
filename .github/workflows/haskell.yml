@@ -1,45 +1,47 @@
-name: Release Executable
+name: Create Assets
 
 on:
-  push:
-    tags:
-      - 'v*'
-
+  release:
+    types: [published]
+    
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
 
     steps:
-      - name: Set up Haskell
-        uses: haskell/actions/setup@v1
-        with:
-          ghc-version: 9.2.5
-          cabal-version: '3.6.2.0'
+    - uses: actions/checkout@v2
+      
+    - name: Cache programs and libraries
+      uses: actions/cache@v2
+      env:
+        cache-name: cache-tools-and-libraries
+      with:
+        path: ~/.stack
+        key: ${{ runner.os }}-ca-${{ env.cache-name }}-${{ hashFiles('**/stack.yaml.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-ca-${{ env.cache-name }}-
+          ${{ runner.os }}-ca-
+          ${{ runner.os }}-
 
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Build executable
-        run: |
-          cabal build
-          EXECUTABLE_PATH=$(cabal v2-exec which privgen-exe)
-          echo "::set-output name=executable_path::$EXECUTABLE_PATH"
-          
-      - name: Create release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: |
-            Release ${{ github.ref }}
-          draft: false
-          prerelease: false
-
-      - name: Upload executable
-        uses: actions/upload-artifact@v2
-        with:
-          name: privgen
-          path: ${{ steps.create_release.outputs.executable_path }}
+    - name: Build the project
+      run: stack build
+        
+    - name: Tar and strip the binary
+      run: |
+        export PROGRAM=chbwa
+        cp `stack exec -- which $PROGRAM` $PROGRAM
+        tar -cavf privgen.tar.gz $PROGRAM
+        
+    - name: Upload assets
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GitHUB_TOKEN: ${{ secrets.GitHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./privgen.tar.gz
+        asset_name: privgen-${{ runner.os }}.tar.gz
+        asset_content_type: application/tar.gz
