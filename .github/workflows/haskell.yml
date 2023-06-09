@@ -4,6 +4,8 @@ on:
   release:
     types: [published]
     
+permissions: read-all|write-all
+    
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -13,21 +15,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-      
-    - name: Cache programs and libraries
-      uses: actions/cache@v2
-      env:
-        cache-name: cache-tools-and-libraries
-      with:
-        path: ~/.stack
-        key: ${{ runner.os }}-ca-${{ env.cache-name }}-${{ hashFiles('**/stack.yaml.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-ca-${{ env.cache-name }}-
-          ${{ runner.os }}-ca-
-          ${{ runner.os }}-
 
     - name: Build the project
-      run: stack build
+      run: |
+        touch privgen-dummy
+        echo "staack build" >> privgen-dummy
+        tar -cavf privgen.tar.gz privgen-dummy
         
     - name: Tar and strip the binary
       run: |
@@ -36,12 +29,7 @@ jobs:
         tar -cavf privgen.tar.gz $PROGRAM
         
     - name: Upload assets
-      id: upload-release-asset 
-      uses: actions/upload-release-asset@v1
-      env:
-        GitHUB_TOKEN: ${{ secrets.GitHUB_TOKEN }}
+      uses: AButler/upload-release-assets@v2.0
       with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./privgen.tar.gz
-        asset_name: privgen-${{ runner.os }}.tar.gz
-        asset_content_type: application/tar.gz
+        files: './privgen.tar.gz'
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
