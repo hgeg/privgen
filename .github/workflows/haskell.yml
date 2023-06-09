@@ -2,29 +2,23 @@ name: Create Assets
 
 on:
   release:
-    types: [published]
+    types: [created]
     
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-
+    runs-on: ubuntu-latest
+    
     steps:
     - uses: actions/checkout@v2
 
     - name: Build the project
-      run: | #stack build
-        touch privgen-dummy
-        echo "test run" >> privgen-dummy
-        tar -cavf privgen.tar.gz privgen-dummy
+      run: stack build
         
-    #- name: Tar and strip the binary
-    #  run: |
-    #    export PROGRAM=privgen-exe
-    #    cp `stack exec -- which $PROGRAM` $PROGRAM
-    #    tar -cavf privgen.tar.gz $PROGRAM
+    - name: Archive binary
+      run: |
+        export PROGRAM=privgen-exe
+        cp `stack exec -- which $PROGRAM` $PROGRAM
+        tar -cavf privgen.tar.gz $PROGRAM
         
     - name: Upload assets
       uses: actions/upload-artifact@v3.1.2
