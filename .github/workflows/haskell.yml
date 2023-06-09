@@ -2,7 +2,7 @@ name: Create Assets
 
 on:
   release:
-    types: [created]
+    types: [created, unpublished, edited]
     
 jobs:
   build:
