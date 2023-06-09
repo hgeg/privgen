@@ -33,3 +33,4 @@ jobs:
       with:
         files: './privgen.tar.gz'
         repo-token: ${{ secrets.GITHUB_TOKEN }}
+        release-tag: ${{ github.ref }}
