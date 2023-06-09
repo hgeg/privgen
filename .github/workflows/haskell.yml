@@ -17,14 +17,8 @@ jobs:
     - name: Build the project
       run: |
         touch privgen-dummy
-        echo "staack build" >> privgen-dummy
+        echo "stack build" >> privgen-dummy
         tar -cavf privgen.tar.gz privgen-dummy
-        
-    - name: Tar and strip the binary
-      run: |
-        export PROGRAM=privgen-exe
-        cp `stack exec -- which $PROGRAM` $PROGRAM
-        tar -cavf privgen.tar.gz $PROGRAM
         
     - name: Upload assets
       uses: AButler/upload-release-assets@v2.0
